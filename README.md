@@ -1,5 +1,7 @@
 # dropin
 
+j'troue ta gueule
+
 Installeurs autonomes pour poser une toolchain **sans root et sans gestionnaire
 de paquets**, dans `.drops/<outil>/` à côté des scripts. Chaque `<outil>.sh` :
 

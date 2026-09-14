@@ -56,8 +56,8 @@ renvoie le chemin de son exécutable.
 set -eu
 git clone --depth 1 <remote> "$HOME/dropin"
 
-skopeo=$("$HOME/dropin/skopeo.sh")          # installe go puis compile, ~2 min
-trufflehog=$("$HOME/dropin/trufflehog.sh")  # télécharge le binaire, quelques secondes
+skopeo=$("$HOME/dropin/skopeo.sh")          # télécharge le binaire, quelques secondes
+trufflehog=$("$HOME/dropin/trufflehog.sh")  # idem
 
 "$skopeo" copy docker://alpine:latest "dir:$HOME/up"
 "$trufflehog" filesystem "$HOME/up" --json

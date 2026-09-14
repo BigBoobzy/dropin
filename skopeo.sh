@@ -3,21 +3,19 @@ set -eu
 drop="$(dirname "$0")/.drops/skopeo"
 
 [ -x "$drop/bin/skopeo" ] && { echo "$drop/bin/skopeo"; exit 0; }
-
-go=$("$(dirname "$0")/go.sh")
-
-[ -e "$drop" ] && chmod -R u+w "$drop" # le cache de modules go est en lecture seule
 rm -rf "$drop"
 mkdir -p "$drop/bin" "$drop/libexec" "$drop/etc"
 
-# Pas de binaire upstream, il faut compiler. Tags de la branche DISABLE_CGO=1
-# de leur Makefile : OpenPGP pur Go au lieu de gpgme, pas de headers btrfs.
-echo "dropin/skopeo  compilation de skopeo (~2 min)" >&2
-GOBIN="$drop/libexec" GOPATH="$drop/gopath" GOCACHE="$drop/gocache" CGO_ENABLED=0 \
-    "$go" install -tags "exclude_graphdriver_btrfs containers_image_openpgp" \
-    go.podman.io/skopeo/cmd/skopeo@latest >&2
-chmod -R u+w "$drop/gopath" "$drop/gocache"
-rm -rf "$drop/gopath" "$drop/gocache"
+# Pas de binaire upstream (containers/skopeo ne publie que des sources).
+# lework/skopeo-binary recompile chaque release en statique (CGO_ENABLED=0,
+# OpenPGP pur Go), même tag que l'upstream. Binaire nu, pas d'archive.
+tag=$(curl -fsSLo /dev/null -w '%{url_effective}' https://github.com/lework/skopeo-binary/releases/latest)
+tag=${tag##*/}
+
+echo "dropin/skopeo  téléchargement de skopeo $tag" >&2
+curl -fsSL "https://github.com/lework/skopeo-binary/releases/download/$tag/skopeo-linux-amd64" \
+    -o "$drop/libexec/skopeo"
+chmod +x "$drop/libexec/skopeo"
 
 # skopeo exige policy.json et registries.conf (normalement dans /etc ou
 # ~/.config/containers) : le wrapper le pointe sur ceux du drop.

@@ -1,0 +1,4 @@
+httpx github.com/projectdiscovery/httpx/cmd/httpx@latest
+nats github.com/nats-io/natscli/nats@latest
+shfmt mvdan.cc/sh/v3/cmd/shfmt@latest
+pup github.com/ericchiang/pup@latest

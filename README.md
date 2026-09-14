@@ -67,3 +67,25 @@ trufflehog=$("$HOME/dropin/trufflehog.sh")  # télécharge le binaire, quelques 
   même contrat dans `entry.fish` : `set skopeo (~/dropin/skopeo.sh)`.
 - Un outil qui en appelle un autre par son nom (`git`, `cargo`…) :
   `PATH="$PATH:$(dirname "$cargo")"`, sans sourcer l'autostart.
+
+## Outils tiers via une toolchain
+
+`go-3rd.sh`, `rust-3rd.sh` et `node-3rd.sh` prennent le nom du binaire en argument
+et le trouvent dans `go-bins.txt`, `rust-bins.txt`, `npm-bins.txt` (`<binaire> <source>`
+par ligne). Un binaire absent du fichier est une erreur, même s'il est déjà installé.
+
+```sh
+httpx=$(~/dropin/go-3rd.sh httpx)          # go install, dans .drops/go-3rd/bin
+websocat=$(~/dropin/rust-3rd.sh websocat)  # cargo install --root, dans .drops/rust-3rd/bin
+claude=$(~/dropin/node-3rd.sh claude)      # npm install -g, dans .drops/node/bin
+```
+
+Pour l'humain, le nom du symlink dans `autostart/` est passé en argument :
+
+```sh
+ln -s ../go-3rd.sh ~/dropin/autostart/httpx.sh
+```
+
+Les shims npm sont en général des scripts `#!/usr/bin/env node` : ils ont besoin de
+node dans le PATH, ce que `activate.sh` garantit ; dans un script, préfixer PATH avec
+`$(dirname "$node")`. Le paquet claude-code, lui, fournit un binaire natif.

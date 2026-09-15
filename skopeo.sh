@@ -1,6 +1,6 @@
 #!/bin/sh
 set -eu
-drop="$(dirname "$0")/.drops/skopeo"
+drop="$(readlink -f "$(dirname "$0")")/.drops/skopeo"
 
 [ -x "$drop/bin/skopeo" ] && { echo "$drop/bin/skopeo"; exit 0; }
 rm -rf "$drop"
